@@ -1,0 +1,29 @@
+version:  '3.2'
+
+services:
+
+  redis:
+    image: "redis:latest"
+    networks:
+      - javanet
+    ports:
+      - 6379:6379
+  postgresql:
+    image: "postgres:latest"
+    networks:
+      - javanet
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: people
+    ports:
+      - 5432:5432
+
+  mongo:
+    image: "mongo:latest"
+    networks:
+      - javanet
+    ports:
+      - 27017:27017
+
+networks:
+  javanet:
