@@ -19,5 +19,6 @@
 
     <modules>
         <module>hello-security</module>
+        <module>basic-nosql</module>
     </modules>
 </project>
