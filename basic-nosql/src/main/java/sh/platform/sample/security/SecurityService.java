@@ -24,7 +24,7 @@ class SecurityService {
 
     void create(UserDTO userDTO) {
         if (repository.existsById(userDTO.getName())) {
-            throw new UserAlreadyExistException("The user already exist with the id: " + userDTO.getName());
+            throw new UserAlreadyExistException("There is an user with this id: " + userDTO.getName());
         } else {
             User user = User.builder()
                     .withPasswordHash(passwordHash)
