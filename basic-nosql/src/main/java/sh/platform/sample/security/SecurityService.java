@@ -23,13 +23,17 @@ class SecurityService {
     private SecurityContext securityContext;
 
     void create(UserDTO userDTO) {
-        User user = User.builder()
-                .withPasswordHash(passwordHash)
-                .withPassword(userDTO.getPassword())
-                .withName(userDTO.getName())
-                .withRoles(getRole())
-                .build();
-        repository.save(user);
+        if (repository.existsById(userDTO.getName())) {
+            throw new UserAlreadyExistException("The user already exist with the id: " + userDTO.getName());
+        } else {
+            User user = User.builder()
+                    .withPasswordHash(passwordHash)
+                    .withPassword(userDTO.getPassword())
+                    .withName(userDTO.getName())
+                    .withRoles(getRole())
+                    .build();
+            repository.save(user);
+        }
     }
 
     void delete(String id) {

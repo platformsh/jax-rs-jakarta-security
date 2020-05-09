@@ -2,7 +2,7 @@ package sh.platform.sample.security.infra.mappers;
 
 import java.util.List;
 
-class ErrorMessage {
+public class ErrorMessage {
 
     private List<String> errors;
 
