@@ -1,4 +1,4 @@
-package sh.platform.sample.infra;
+package sh.platform.sample.security.infra;
 
 import javax.annotation.security.DeclareRoles;
 import javax.enterprise.context.ApplicationScoped;

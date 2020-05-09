@@ -1,4 +1,4 @@
-package sh.platform.sample.infra;
+package sh.platform.sample.security.infra;
 
 import jakarta.nosql.document.DocumentCollectionManager;
 import org.eclipse.microprofile.config.inject.ConfigProperty;

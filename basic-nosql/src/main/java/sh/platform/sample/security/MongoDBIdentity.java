@@ -34,11 +34,12 @@ public class MongoDBIdentity implements IdentityStore {
                     .class.cast(credential);
 
             final Password userPassword = userCredential.getPassword();
-            final String password = passwordHash.generate(userPassword.getValue());
-            final Optional<User> userOptional = repository.findByNameAndPassword(userCredential.getCaller(), password);
+            final Optional<User> userOptional = repository.findById(userCredential.getCaller());
             if (userOptional.isPresent()) {
                 final User user = userOptional.get();
-                return new CredentialValidationResult(user.getName(), user.getRoles());
+                if (passwordHash.verify(userPassword.getValue(), user.getPassword())) {
+                    return new CredentialValidationResult(user.getName(), user.getRoles());
+                }
             }
 
         }

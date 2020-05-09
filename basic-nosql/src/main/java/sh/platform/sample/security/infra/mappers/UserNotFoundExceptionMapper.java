@@ -1,4 +1,4 @@
-package sh.platform.sample.infra.mappers;
+package sh.platform.sample.security.infra.mappers;
 
 import sh.platform.sample.security.UserNotFoundException;
 
