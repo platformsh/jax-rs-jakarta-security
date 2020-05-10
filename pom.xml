@@ -20,5 +20,6 @@
     <modules>
         <module>hello-security</module>
         <module>basic-nosql</module>
+        <module>oauth2</module>
     </modules>
 </project>
