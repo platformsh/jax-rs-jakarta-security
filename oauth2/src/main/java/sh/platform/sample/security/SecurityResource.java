@@ -1,6 +1,8 @@
 package sh.platform.sample.security;
 
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
+import javax.ejb.Remove;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -36,7 +38,6 @@ public class SecurityResource {
         service.delete(id);
     }
 
-
     @Path("{id}")
     @PUT
     public void changePassword(@PathParam("id") String id, @Valid UserDTO dto) {
@@ -68,5 +69,25 @@ public class SecurityResource {
     @RolesAllowed("ADMIN")
     public List<UserDTO> getUsers() {
         return service.getUsers();
+    }
+
+    @Remove
+    @PermitAll
+    public void removeUser() {
+        service.removeUser();
+    }
+
+    @Remove
+    @RolesAllowed("ADMIN")
+    @Path("{id}")
+    public void removeUser(@PathParam("id") String id) {
+        service.removeUser(id);
+    }
+
+    @Remove
+    @PermitAll
+    @Path("token/{token}")
+    public void removeToken(@PathParam("token") String token) {
+        service.removeToken(token);
     }
 }

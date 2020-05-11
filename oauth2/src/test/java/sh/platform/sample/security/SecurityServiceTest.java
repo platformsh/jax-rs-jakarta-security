@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
+import javax.enterprise.event.Event;
 import javax.security.enterprise.SecurityContext;
 import javax.security.enterprise.identitystore.Pbkdf2PasswordHash;
 import java.security.Principal;

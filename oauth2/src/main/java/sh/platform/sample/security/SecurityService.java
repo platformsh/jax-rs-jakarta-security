@@ -4,6 +4,7 @@ import jakarta.nosql.mapping.Database;
 import jakarta.nosql.mapping.DatabaseType;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.security.enterprise.SecurityContext;
 import javax.security.enterprise.identitystore.Pbkdf2PasswordHash;
@@ -25,6 +26,12 @@ public class SecurityService {
 
     @Inject
     private SecurityContext securityContext;
+
+    @Inject
+    private Event<RemoveUser> removeUserEvent;
+
+    @Inject
+    private Event<RemoveToken> removeTokenEvent;
 
     void create(UserDTO userDTO) {
         if (repository.existsById(userDTO.getName())) {
@@ -75,12 +82,7 @@ public class SecurityService {
     }
 
     UserDTO getUser() {
-        final Principal principal = securityContext.getCallerPrincipal();
-        if (principal == null) {
-            throw new UserNotAuthorizedException();
-        }
-        final User user = repository.findById(principal.getName())
-                .orElseThrow(() -> new UserNotFoundException(principal.getName()));
+        final User user = getLoggedUser();
         UserDTO dto = toDTO(user);
         return dto;
     }
@@ -100,6 +102,36 @@ public class SecurityService {
         }
         throw new UserNotAuthorizedException();
 
+    }
+
+    public void removeUser() {
+        final User user = getLoggedUser();
+        RemoveUser removeUser = new RemoveUser(user);
+        removeUserEvent.fire(removeUser);
+        repository.deleteById(user.getName());
+    }
+
+    public void removeUser(String userId) {
+        final User user = repository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+        RemoveUser removeUser = new RemoveUser(user);
+        removeUserEvent.fire(removeUser);
+        repository.deleteById(user.getName());
+    }
+
+    public void removeToken(String token) {
+        final User loggedUser = getLoggedUser();
+        RemoveToken removeToken = new RemoveToken(loggedUser, token);
+        removeTokenEvent.fire(removeToken);
+    }
+
+    private User getLoggedUser() {
+        final Principal principal = securityContext.getCallerPrincipal();
+        if (principal == null) {
+            throw new UserNotAuthorizedException();
+        }
+        return repository.findById(principal.getName())
+                .orElseThrow(() -> new UserNotFoundException(principal.getName()));
     }
 
     private UserDTO toDTO(User user) {
