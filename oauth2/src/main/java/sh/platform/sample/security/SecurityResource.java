@@ -2,7 +2,6 @@ package sh.platform.sample.security;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.Remove;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -32,7 +31,7 @@ public class SecurityResource {
     }
 
     @DELETE
-    @Path("{id}")
+    @Path("user/{id}")
     @RolesAllowed("ADMIN")
     public void delete(@PathParam("id") String id) {
         service.delete(id);
@@ -71,20 +70,21 @@ public class SecurityResource {
         return service.getUsers();
     }
 
-    @Remove
+    @DELETE
     @PermitAll
+    @Path("me")
     public void removeUser() {
         service.removeUser();
     }
 
-    @Remove
+    @DELETE
     @RolesAllowed("ADMIN")
     @Path("{id}")
     public void removeUser(@PathParam("id") String id) {
         service.removeUser(id);
     }
 
-    @Remove
+    @DELETE
     @PermitAll
     @Path("token/{token}")
     public void removeToken(@PathParam("token") String token) {
