@@ -34,7 +34,7 @@ public class Oauth2Response {
     static Oauth2Response of(AccessToken accessToken, RefreshToken refreshToken, int expiresIn) {
         Oauth2Response response = new Oauth2Response();
         response.accessToken = accessToken.getId();
-        response.refreshToken = refreshToken.getAccessToken();
+        response.refreshToken = refreshToken.getId();
         response.expiresIn = expiresIn;
         return response;
     }
