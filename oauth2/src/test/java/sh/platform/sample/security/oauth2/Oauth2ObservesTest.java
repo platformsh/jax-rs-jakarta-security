@@ -31,38 +31,44 @@ class Oauth2ObservesTest {
     @Test
     public void shouldRemoveUser() {
 
-//        User user = User.builder().withName("otavio").withPassword("123")
-//                .withRoles(EnumSet.of(Role.ADMIN))
-//                .withPasswordHash(passwordHash)
-//                .build();
-//
-//        UserToken userToken = new UserToken();
-//        final Token token = userToken.generateToken();
-//        final Oauth2Response oauth2Response = Oauth2Response.of(Token.generate(), 10);
-//        RefreshToken refreshToken = new RefreshToken(oauth2Response, "otavio");
-//        Mockito.when(template.get(token.get(), RefreshToken.class)).thenReturn(Optional.of(refreshToken));
-//        Mockito.when(template.get(user.getName(), UserToken.class)).thenReturn(Optional.of(userToken));
-//        observes.observe(new RemoveUser(user));
-//        Mockito.verify(template).delete("otavio");
-//        Mockito.verify(template).delete(oauth2Response.getRefreshToken());
-//        Mockito.verify(template).delete(oauth2Response.getAccessToken());
+        User user = User.builder().withName("otavio").withPassword("123")
+                .withRoles(EnumSet.of(Role.ADMIN))
+                .withPasswordHash(passwordHash)
+                .build();
+
+        UserToken userToken = new UserToken();
+        final Token token = userToken.generateToken();
+
+        AccessToken accessToken = new AccessToken(token.get(), user.getName());
+        RefreshToken refreshToken = new RefreshToken(token.get(), user.getName());
+
+        final Oauth2Response oauth2Response = Oauth2Response.of(accessToken, refreshToken, 10);
+        Mockito.when(template.get(token.get(), RefreshToken.class)).thenReturn(Optional.of(refreshToken));
+        Mockito.when(template.get(user.getName(), UserToken.class)).thenReturn(Optional.of(userToken));
+        observes.observe(new RemoveUser(user));
+        Mockito.verify(template).delete("otavio");
+        Mockito.verify(template).delete(oauth2Response.getRefreshToken());
+        Mockito.verify(template).delete(oauth2Response.getAccessToken());
     }
 
     @Test
     public void shouldRemoveToken() {
 
-//        User user = User.builder().withName("otavio").withPassword("123")
-//                .withRoles(EnumSet.of(Role.ADMIN))
-//                .withPasswordHash(passwordHash)
-//                .build();
-//
-//        final Oauth2Response oauth2Response = Oauth2Response.of(Token.generate(), 10);
-//        RemoveToken removeToken = new RemoveToken(user, "token");
-//        RefreshToken refreshToken = new RefreshToken(oauth2Response, "otavio");
-//        Mockito.when(template.get("token", RefreshToken.class)).thenReturn(Optional.of(refreshToken));
-//
-//        observes.observe(removeToken);
-//        Mockito.verify(template).delete(oauth2Response.getRefreshToken());
-//        Mockito.verify(template).delete(oauth2Response.getAccessToken());
+        User user = User.builder().withName("otavio").withPassword("123")
+                .withRoles(EnumSet.of(Role.ADMIN))
+                .withPasswordHash(passwordHash)
+                .build();
+
+        UserToken userToken = new UserToken();
+        final Token token = userToken.generateToken();
+        AccessToken accessToken = new AccessToken(token.get(), user.getName());
+        RefreshToken refreshToken = new RefreshToken(token.get(), user.getName());
+        final Oauth2Response oauth2Response = Oauth2Response.of(accessToken, refreshToken, 10);
+        RemoveToken removeToken = new RemoveToken(user, "token");
+        Mockito.when(template.get("token", RefreshToken.class)).thenReturn(Optional.of(refreshToken));
+
+        observes.observe(removeToken);
+        Mockito.verify(template).delete(oauth2Response.getRefreshToken());
+        Mockito.verify(template).delete(oauth2Response.getAccessToken());
     }
 }
