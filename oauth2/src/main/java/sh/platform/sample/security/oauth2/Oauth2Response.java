@@ -31,11 +31,10 @@ public class Oauth2Response {
         return refreshToken;
     }
 
-    public static Oauth2Response of(Token token, int expiresIn) {
-        Objects.requireNonNull(token, "token is required");
+    static Oauth2Response of(AccessToken accessToken, RefreshToken refreshToken, int expiresIn) {
         Oauth2Response response = new Oauth2Response();
-        response.accessToken = token.get();
-        response.refreshToken = Token.generate().get();
+        response.accessToken = accessToken.getId();
+        response.refreshToken = refreshToken.getAccessToken();
         response.expiresIn = expiresIn;
         return response;
     }

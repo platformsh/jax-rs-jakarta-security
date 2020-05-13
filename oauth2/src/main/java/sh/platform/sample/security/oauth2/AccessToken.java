@@ -2,7 +2,6 @@ package sh.platform.sample.security.oauth2;
 
 import jakarta.nosql.mapping.Entity;
 import jakarta.nosql.mapping.Id;
-import sh.platform.sample.security.User;
 import sh.platform.sample.security.infra.FieldPropertyVisibilityStrategy;
 
 import javax.json.bind.annotation.JsonbProperty;
@@ -19,11 +18,11 @@ public class AccessToken {
     private String user;
 
     @Deprecated
-    public  AccessToken() {
+    public AccessToken() {
     }
 
-    AccessToken(Oauth2Response response, String user) {
-        this.id = response.getAccessToken();
+    AccessToken(String id, String user) {
+        this.id = id;
         this.user = user;
     }
 

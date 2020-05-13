@@ -2,6 +2,7 @@ package sh.platform.sample.security.oauth2;
 
 import jakarta.nosql.mapping.Entity;
 import jakarta.nosql.mapping.Id;
+import jakarta.nosql.mapping.keyvalue.KeyValueTemplate;
 import sh.platform.sample.security.infra.FieldPropertyVisibilityStrategy;
 
 import javax.json.bind.annotation.JsonbProperty;
@@ -24,9 +25,9 @@ public class RefreshToken {
     public RefreshToken() {
     }
 
-    RefreshToken(Oauth2Response response, String user) {
-        this.id = response.getRefreshToken();
-        this.accessToken = response.getAccessToken();
+    RefreshToken(String accessToken, String user) {
+        this.id = Token.generate().get();
+        this.accessToken = accessToken;
         this.user = user;
     }
 
@@ -42,8 +43,12 @@ public class RefreshToken {
         return accessToken;
     }
 
-    public void update(AccessToken refreshToken) {
+    void update(AccessToken refreshToken, KeyValueTemplate template) {
+        template.delete(this.id);
+        template.delete(this.accessToken);
         this.accessToken = refreshToken.getId();
+        this.id = Token.generate().get();
+        template.put(this);
     }
 
     @Override

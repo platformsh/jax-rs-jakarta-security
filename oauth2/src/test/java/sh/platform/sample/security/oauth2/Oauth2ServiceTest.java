@@ -22,6 +22,7 @@ import java.util.stream.StreamSupport;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 import static sh.platform.sample.security.oauth2.Oauth2Service.EXPIRES;
 
@@ -47,7 +48,6 @@ class Oauth2ServiceTest {
     public void setUp() {
         when(passwordHash.generate(Mockito.any(char[].class)))
                 .thenReturn("hashPassword");
-
     }
 
     @Test
@@ -97,19 +97,22 @@ class Oauth2ServiceTest {
 
     @Test
     public void shouldRefreshToken() {
-        ArgumentCaptor<RefreshToken> captor = ArgumentCaptor.forClass(RefreshToken.class);
+        ArgumentCaptor<RefreshToken> refreshCaptor = ArgumentCaptor.forClass(RefreshToken.class);
         ArgumentCaptor<AccessToken> accessCaptor = ArgumentCaptor.forClass(AccessToken.class);
         Oauth2Request request = new Oauth2Request();
         request.setGrandType(GrantType.REFRESH_TOKEN);
         request.setRefreshToken("refresh");
 
+        final Token token1 = Token.generate();
         Mockito.when(template.get("refresh", RefreshToken.class))
-                .thenReturn(Optional.of(new RefreshToken(Oauth2Response.of(Token.generate(), 10), "user")));
+                .thenReturn(Optional.of(new RefreshToken(token1.get(), "user")));
 
-        final Oauth2Response token = service.refreshToken(request);
-        Mockito.verify(template).put(captor.capture(), Mockito.eq(EXPIRES));
-        Mockito.verify(template).put(accessCaptor.capture());
-        final RefreshToken refreshToken = captor.getValue();
+        service.refreshToken(request);
+        Mockito.verify(template).put(accessCaptor.capture(), Mockito.eq(EXPIRES));
+        Mockito.verify(template).put(refreshCaptor.capture());
+        Mockito.verify(template, times(2)).delete(Mockito.anyString());
+
+        final RefreshToken refreshToken = refreshCaptor.getValue();
         final AccessToken accessToken = accessCaptor.getValue();
 
         assertEquals(accessToken.getUser(), refreshToken.getUser());
