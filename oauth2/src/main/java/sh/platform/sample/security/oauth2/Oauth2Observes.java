@@ -29,7 +29,7 @@ class Oauth2Observes {
                 .map(UserToken::getTokens)
                 .orElse(Collections.emptySet());
 
-        tokens.stream().map(t -> template.get(t.get(), RefreshToken.class))
+        tokens.stream().map(t -> template.get(RefreshToken.PREFIX + t.get(), RefreshToken.class))
                 .forEach(o -> o.ifPresent(this::deleteTokens));
 
         template.delete(user.getName());
@@ -37,7 +37,8 @@ class Oauth2Observes {
 
     public void observe(@Observes RemoveToken removeToken) {
 
-        final Optional<RefreshToken> refreshTokenOptional = template.get(removeToken.getToken(), RefreshToken.class);
+        final Optional<RefreshToken> refreshTokenOptional = template.get(RefreshToken.PREFIX + removeToken.getToken(),
+                RefreshToken.class);
         if (refreshTokenOptional.isPresent()) {
             final RefreshToken refreshToken = refreshTokenOptional.get();
             final User user = removeToken.getUser();
@@ -51,7 +52,7 @@ class Oauth2Observes {
     }
 
     private void deleteTokens(RefreshToken token) {
-        template.delete(token.getAccessToken());
+        template.delete(AccessToken.PREFIX + token.getAccessToken());
         template.delete(token.getId());
     }
 

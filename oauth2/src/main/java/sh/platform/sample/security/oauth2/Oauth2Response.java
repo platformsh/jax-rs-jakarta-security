@@ -39,5 +39,4 @@ public class Oauth2Response {
         return response;
     }
 
-
 }

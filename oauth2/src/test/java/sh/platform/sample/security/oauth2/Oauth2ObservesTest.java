@@ -43,12 +43,12 @@ class Oauth2ObservesTest {
         RefreshToken refreshToken = new RefreshToken(userToken, token, user.getName());
 
         final Oauth2Response oauth2Response = Oauth2Response.of(accessToken, refreshToken, 10);
-        Mockito.when(template.get(token.get(), RefreshToken.class)).thenReturn(Optional.of(refreshToken));
+        Mockito.when(template.get(RefreshToken.PREFIX + token.get(), RefreshToken.class)).thenReturn(Optional.of(refreshToken));
         Mockito.when(template.get(user.getName(), UserToken.class)).thenReturn(Optional.of(userToken));
         observes.observe(new RemoveUser(user));
         Mockito.verify(template).delete("otavio");
-        Mockito.verify(template).delete(oauth2Response.getRefreshToken());
-        Mockito.verify(template).delete(oauth2Response.getAccessToken());
+        Mockito.verify(template).delete(RefreshToken.PREFIX + oauth2Response.getRefreshToken());
+        Mockito.verify(template).delete(AccessToken.PREFIX + oauth2Response.getAccessToken());
     }
 
     @Test
@@ -65,10 +65,10 @@ class Oauth2ObservesTest {
         RefreshToken refreshToken = new RefreshToken(userToken, token, user.getName());
         final Oauth2Response oauth2Response = Oauth2Response.of(accessToken, refreshToken, 10);
         RemoveToken removeToken = new RemoveToken(user, "token");
-        Mockito.when(template.get("token", RefreshToken.class)).thenReturn(Optional.of(refreshToken));
+        Mockito.when(template.get(RefreshToken.PREFIX + "token", RefreshToken.class)).thenReturn(Optional.of(refreshToken));
 
         observes.observe(removeToken);
-        Mockito.verify(template).delete(oauth2Response.getRefreshToken());
-        Mockito.verify(template).delete(oauth2Response.getAccessToken());
+        Mockito.verify(template).delete(RefreshToken.PREFIX + oauth2Response.getRefreshToken());
+        Mockito.verify(template).delete(AccessToken.PREFIX + oauth2Response.getAccessToken());
     }
 }

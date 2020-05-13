@@ -90,8 +90,8 @@ class Oauth2ServiceTest {
         final RefreshToken refreshToken = captor.getValue();
         assertEquals(user.getName(), userToken.getUsername());
         assertEquals(userToken.getUsername(), refreshToken.getUser());
-        assertEquals(accessToken.getId(), refreshToken.getAccessToken());
-        assertThat(userToken.getTokens(), Matchers.containsInAnyOrder(Token.of(refreshToken.getId())));
+        assertEquals(accessToken.getToken(), refreshToken.getAccessToken());
+        assertThat(userToken.getTokens(), Matchers.containsInAnyOrder(Token.of(refreshToken.getToken())));
     }
 
     @Test
@@ -104,7 +104,7 @@ class Oauth2ServiceTest {
 
         UserToken userToken = new UserToken();
         final Token token1 = Token.generate();
-        Mockito.when(template.get("refresh", RefreshToken.class))
+        Mockito.when(template.get(RefreshToken.PREFIX + "refresh", RefreshToken.class))
                 .thenReturn(Optional.of(new RefreshToken(userToken, token1, "user")));
 
         service.refreshToken(request);
@@ -119,7 +119,7 @@ class Oauth2ServiceTest {
         final AccessToken accessToken = accessCaptor.getValue();
 
         assertEquals(accessToken.getUser(), refreshToken.getUser());
-        assertEquals(accessToken.getId(), refreshToken.getAccessToken());
+        assertEquals(accessToken.getToken(), refreshToken.getAccessToken());
     }
 
 }
