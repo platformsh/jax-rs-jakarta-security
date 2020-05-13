@@ -21,8 +21,8 @@ public class AccessToken {
     public AccessToken() {
     }
 
-    AccessToken(String id, String user) {
-        this.id = id;
+    AccessToken(Token token, String user) {
+        this.id = token.get();
         this.user = user;
     }
 

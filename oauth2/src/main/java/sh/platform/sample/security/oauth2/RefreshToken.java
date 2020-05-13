@@ -7,6 +7,7 @@ import sh.platform.sample.security.infra.FieldPropertyVisibilityStrategy;
 
 import javax.json.bind.annotation.JsonbProperty;
 import javax.json.bind.annotation.JsonbVisibility;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -25,9 +26,9 @@ public class RefreshToken {
     public RefreshToken() {
     }
 
-    RefreshToken(UserToken userToken, String accessToken, String user) {
+    RefreshToken(UserToken userToken, Token accessToken, String user) {
         this.id = userToken.generateToken().get();
-        this.accessToken = accessToken;
+        this.accessToken = accessToken.get();
         this.user = user;
     }
 
@@ -49,8 +50,7 @@ public class RefreshToken {
         userToken.remove(Token.of(this.id));
         this.accessToken = refreshToken.getId();
         this.id = userToken.generateToken().get();
-        template.put(this);
-        template.put(userToken);
+        template.put(List.of(this, userToken));
     }
 
     @Override

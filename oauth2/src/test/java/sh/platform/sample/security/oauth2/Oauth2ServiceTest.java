@@ -91,12 +91,12 @@ class Oauth2ServiceTest {
         assertEquals(user.getName(), userToken.getUsername());
         assertEquals(userToken.getUsername(), refreshToken.getUser());
         assertEquals(accessToken.getId(), refreshToken.getAccessToken());
-        assertThat(userToken.getTokens(), Matchers.containsInAnyOrder(Token.of(accessToken.getId())));
+        assertThat(userToken.getTokens(), Matchers.containsInAnyOrder(Token.of(refreshToken.getId())));
     }
 
     @Test
     public void shouldRefreshToken() {
-        ArgumentCaptor<RefreshToken> refreshCaptor = ArgumentCaptor.forClass(RefreshToken.class);
+        ArgumentCaptor<Iterable> refreshCaptor = ArgumentCaptor.forClass(Iterable.class);
         ArgumentCaptor<AccessToken> accessCaptor = ArgumentCaptor.forClass(AccessToken.class);
         Oauth2Request request = new Oauth2Request();
         request.setGrandType(GrantType.REFRESH_TOKEN);
@@ -105,14 +105,17 @@ class Oauth2ServiceTest {
         UserToken userToken = new UserToken();
         final Token token1 = Token.generate();
         Mockito.when(template.get("refresh", RefreshToken.class))
-                .thenReturn(Optional.of(new RefreshToken(userToken, token1.get(), "user")));
+                .thenReturn(Optional.of(new RefreshToken(userToken, token1, "user")));
 
         service.refreshToken(request);
         Mockito.verify(template).put(accessCaptor.capture(), Mockito.eq(EXPIRES));
         Mockito.verify(template).put(refreshCaptor.capture());
         Mockito.verify(template, times(2)).delete(Mockito.anyString());
 
-        final RefreshToken refreshToken = refreshCaptor.getValue();
+        final RefreshToken refreshToken = (RefreshToken) StreamSupport
+                .stream(refreshCaptor.getValue().spliterator(), false)
+                .filter(RefreshToken.class::isInstance)
+                .findFirst().get();
         final AccessToken accessToken = accessCaptor.getValue();
 
         assertEquals(accessToken.getUser(), refreshToken.getUser());

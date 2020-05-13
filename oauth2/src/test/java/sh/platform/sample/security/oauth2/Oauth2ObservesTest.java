@@ -39,8 +39,8 @@ class Oauth2ObservesTest {
         UserToken userToken = new UserToken();
         final Token token = userToken.generateToken();
 
-        AccessToken accessToken = new AccessToken(token.get(), user.getName());
-        RefreshToken refreshToken = new RefreshToken(userToken, token.get(), user.getName());
+        AccessToken accessToken = new AccessToken(token, user.getName());
+        RefreshToken refreshToken = new RefreshToken(userToken, token, user.getName());
 
         final Oauth2Response oauth2Response = Oauth2Response.of(accessToken, refreshToken, 10);
         Mockito.when(template.get(token.get(), RefreshToken.class)).thenReturn(Optional.of(refreshToken));
@@ -61,8 +61,8 @@ class Oauth2ObservesTest {
 
         UserToken userToken = new UserToken();
         final Token token = userToken.generateToken();
-        AccessToken accessToken = new AccessToken(token.get(), user.getName());
-        RefreshToken refreshToken = new RefreshToken(userToken, token.get(), user.getName());
+        AccessToken accessToken = new AccessToken(token, user.getName());
+        RefreshToken refreshToken = new RefreshToken(userToken, token, user.getName());
         final Oauth2Response oauth2Response = Oauth2Response.of(accessToken, refreshToken, 10);
         RemoveToken removeToken = new RemoveToken(user, "token");
         Mockito.when(template.get("token", RefreshToken.class)).thenReturn(Optional.of(refreshToken));

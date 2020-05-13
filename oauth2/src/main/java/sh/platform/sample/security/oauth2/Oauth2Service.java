@@ -46,8 +46,8 @@ class Oauth2Service {
 
         final Token token = Token.generate();
 
-        AccessToken accessToken = new AccessToken(token.get(), user.getName());
-        RefreshToken refreshToken = new RefreshToken(userToken, token.get(), user.getName());
+        AccessToken accessToken = new AccessToken(token, user.getName());
+        RefreshToken refreshToken = new RefreshToken(userToken, token, user.getName());
 
         template.put(refreshToken, EXPIRES);
         template.put(Arrays.asList(userToken, accessToken));
@@ -70,7 +70,7 @@ class Oauth2Service {
                 .orElse(new UserToken(refreshToken.getUser()));
 
         final Token token = Token.generate();
-        AccessToken accessToken = new AccessToken(token.get(), refreshToken.getUser());
+        AccessToken accessToken = new AccessToken(token, refreshToken.getUser());
         refreshToken.update(accessToken, userToken, template);
         template.put(accessToken, EXPIRES);
         final Oauth2Response response = Oauth2Response.of(accessToken, refreshToken, EXPIRE_IN);
