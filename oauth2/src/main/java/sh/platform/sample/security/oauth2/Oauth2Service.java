@@ -63,7 +63,7 @@ class Oauth2Service {
             throw new ConstraintViolationException(violations);
         }
 
-        RefreshToken refreshToken = template.get(request.getRefreshToken(), RefreshToken.class)
+        RefreshToken refreshToken = template.get(RefreshToken.PREFIX + request.getRefreshToken(), RefreshToken.class)
                 .orElseThrow(() -> new UserNotAuthorizedException("Invalid Token"));
 
         final UserToken userToken = template.get(request.getUsername(), UserToken.class)

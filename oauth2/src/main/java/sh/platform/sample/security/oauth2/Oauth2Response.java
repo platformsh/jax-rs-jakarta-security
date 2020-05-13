@@ -33,8 +33,8 @@ public class Oauth2Response {
 
     static Oauth2Response of(AccessToken accessToken, RefreshToken refreshToken, int expiresIn) {
         Oauth2Response response = new Oauth2Response();
-        response.accessToken = accessToken.getId();
-        response.refreshToken = refreshToken.getId();
+        response.accessToken = accessToken.getToken();
+        response.refreshToken = refreshToken.getToken();
         response.expiresIn = expiresIn;
         return response;
     }

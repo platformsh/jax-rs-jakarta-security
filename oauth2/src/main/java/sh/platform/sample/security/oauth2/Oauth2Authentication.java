@@ -44,14 +44,13 @@ public class Oauth2Authentication implements HttpAuthenticationMechanism {
             return httpMessageContext.doNothing();
         }
         final String token = matcher.group(1);
-        final Optional<RefreshToken> optionalRefreshToken = template
-                .get(token, RefreshToken.class);
+        final Optional<AccessToken> optional = template.get(AccessToken.PREFIX + token, AccessToken.class);
 
-        if(!optionalRefreshToken.isPresent()) {
+        if (!optional.isPresent()) {
             return httpMessageContext.responseUnauthorized();
         }
-        final RefreshToken refreshToken = optionalRefreshToken.get();
-        final CredentialValidationResult validate = identityStoreHandler.validate(new CallerOnlyCredential(refreshToken.getUser()));
+        final AccessToken accessToken = optional.get();
+        final CredentialValidationResult validate = identityStoreHandler.validate(new CallerOnlyCredential(accessToken.getUser()));
         if (validate.getStatus() == VALID) {
             return httpMessageContext.notifyContainerAboutLogin(validate.getCallerPrincipal(), validate.getCallerGroups());
         } else {

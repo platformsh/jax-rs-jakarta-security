@@ -14,9 +14,15 @@ import java.util.Objects;
 @JsonbVisibility(FieldPropertyVisibilityStrategy.class)
 public class RefreshToken {
 
+    static final String PREFIX = "refresh_token:";
+
     @Id
     @JsonbProperty
     private String id;
+
+    @JsonbProperty
+    private String token;
+
     @JsonbProperty
     private String accessToken;
     @JsonbProperty
@@ -27,7 +33,8 @@ public class RefreshToken {
     }
 
     RefreshToken(UserToken userToken, Token accessToken, String user) {
-        this.id = userToken.generateToken().get();
+        this.token = userToken.generateToken().get();
+        this.id = PREFIX + this.token;
         this.accessToken = accessToken.get();
         this.user = user;
     }
@@ -42,6 +49,10 @@ public class RefreshToken {
 
     public String getAccessToken() {
         return accessToken;
+    }
+
+    public String getToken() {
+        return token;
     }
 
     void update(AccessToken refreshToken, UserToken userToken, KeyValueTemplate template) {

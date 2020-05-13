@@ -12,17 +12,22 @@ import java.util.Objects;
 @JsonbVisibility(FieldPropertyVisibilityStrategy.class)
 public class AccessToken {
 
+    static final String PREFIX = "access_token:";
+
     @Id
     private String id;
     @JsonbProperty
     private String user;
+    @JsonbProperty
+    private String token;
 
     @Deprecated
     public AccessToken() {
     }
 
     AccessToken(Token token, String user) {
-        this.id = token.get();
+        this.token = token.get();
+        this.id = PREFIX + token.get();
         this.user = user;
     }
 
@@ -32,6 +37,10 @@ public class AccessToken {
 
     public String getUser() {
         return user;
+    }
+
+    public String getToken() {
+        return token;
     }
 
     @Override
