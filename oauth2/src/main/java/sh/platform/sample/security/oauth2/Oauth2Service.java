@@ -44,11 +44,10 @@ class Oauth2Service {
         final UserToken userToken = template.get(request.getUsername(), UserToken.class)
                 .orElse(new UserToken(user.getName()));
 
-        final Token token = userToken.generateToken();
-
+        final Token token = Token.generate();
 
         AccessToken accessToken = new AccessToken(token.get(), user.getName());
-        RefreshToken refreshToken = new RefreshToken(token.get(), user.getName());
+        RefreshToken refreshToken = new RefreshToken(userToken, token.get(), user.getName());
 
         template.put(refreshToken, EXPIRES);
         template.put(Arrays.asList(userToken, accessToken));
@@ -67,9 +66,12 @@ class Oauth2Service {
         RefreshToken refreshToken = template.get(request.getRefreshToken(), RefreshToken.class)
                 .orElseThrow(() -> new UserNotAuthorizedException("Invalid Token"));
 
+        final UserToken userToken = template.get(request.getUsername(), UserToken.class)
+                .orElse(new UserToken(refreshToken.getUser()));
+
         final Token token = Token.generate();
         AccessToken accessToken = new AccessToken(token.get(), refreshToken.getUser());
-        refreshToken.update(accessToken, template);
+        refreshToken.update(accessToken, userToken, template);
         template.put(accessToken, EXPIRES);
         final Oauth2Response response = Oauth2Response.of(accessToken, refreshToken, EXPIRE_IN);
         return response;

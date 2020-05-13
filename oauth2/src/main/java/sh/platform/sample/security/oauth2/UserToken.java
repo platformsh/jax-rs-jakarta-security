@@ -44,6 +44,12 @@ public class UserToken {
         return tokens.stream().collect(Collectors.toUnmodifiableSet());
     }
 
+    void remove(Token token) {
+        if (tokens != null) {
+            this.tokens.remove(token);
+        }
+    }
+
     public Token generateToken() {
         Token token = Token.generate();
         if (tokens == null) {

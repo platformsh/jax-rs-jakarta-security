@@ -25,8 +25,8 @@ public class RefreshToken {
     public RefreshToken() {
     }
 
-    RefreshToken(String accessToken, String user) {
-        this.id = Token.generate().get();
+    RefreshToken(UserToken userToken, String accessToken, String user) {
+        this.id = userToken.generateToken().get();
         this.accessToken = accessToken;
         this.user = user;
     }
@@ -43,12 +43,14 @@ public class RefreshToken {
         return accessToken;
     }
 
-    void update(AccessToken refreshToken, KeyValueTemplate template) {
+    void update(AccessToken refreshToken, UserToken userToken, KeyValueTemplate template) {
         template.delete(this.id);
         template.delete(this.accessToken);
+        userToken.remove(Token.of(this.id));
         this.accessToken = refreshToken.getId();
-        this.id = Token.generate().get();
+        this.id = userToken.generateToken().get();
         template.put(this);
+        template.put(userToken);
     }
 
     @Override
