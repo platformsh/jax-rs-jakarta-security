@@ -66,7 +66,7 @@ class Oauth2Service {
         RefreshToken refreshToken = template.get(RefreshToken.PREFIX + request.getRefreshToken(), RefreshToken.class)
                 .orElseThrow(() -> new UserNotAuthorizedException("Invalid Token"));
 
-        final UserToken userToken = template.get(request.getUsername(), UserToken.class)
+        final UserToken userToken = template.get(refreshToken.getUser(), UserToken.class)
                 .orElse(new UserToken(refreshToken.getUser()));
 
         final Token token = Token.generate();

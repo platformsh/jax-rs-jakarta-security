@@ -56,8 +56,8 @@ public class RefreshToken {
     }
 
     void update(AccessToken refreshToken, UserToken userToken, KeyValueTemplate template) {
-        template.delete(PREFIX + this.id);
-        template.delete(RefreshToken.PREFIX + this.accessToken);
+        template.delete( this.id);
+        template.delete(AccessToken.PREFIX + this.accessToken);
         userToken.remove(Token.of(this.id));
         this.accessToken = refreshToken.getToken();
         this.token = userToken.generateToken().get();
