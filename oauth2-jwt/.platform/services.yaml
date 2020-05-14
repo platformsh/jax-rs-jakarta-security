@@ -1,0 +1,7 @@
+mongodb:
+  type: mongodb:3.6
+  disk: 1024
+
+redis:
+  type: redis-persistent:5.0
+  disk: 1024
