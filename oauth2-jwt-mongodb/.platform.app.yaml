@@ -1,0 +1,24 @@
+name: app
+type: "java:11"
+disk: 1024
+hooks:
+    build:  mvn clean package payara-micro:bundle
+
+relationships:
+    mongodb: 'mongodb:mongodb'
+
+web:
+    commands:
+        start: |
+            export MONGO_PORT=`echo $PLATFORM_RELATIONSHIPS|base64 -d|json_pp|jq -r ".mongodb[0].port"`
+            export MONGO_HOST=`echo $PLATFORM_RELATIONSHIPS|base64 -d|json_pp|jq -r ".mongodb[0].host"`
+            export MONGO_ADDRESS="${MONGO_HOST}:${MONGO_PORT}"
+            export MONGO_PASSWORD=`echo $PLATFORM_RELATIONSHIPS|base64 -d|json_pp|jq -r ".mongodb[0].password"`
+            export MONGO_USER=`echo $PLATFORM_RELATIONSHIPS|base64 -d|json_pp|jq -r ".mongodb[0].username"`
+            export MONGO_DATABASE=`echo $PLATFORM_RELATIONSHIPS|base64 -d|json_pp|jq -r ".mongodb[0].path"`
+            java -jar -Xmx$(jq .info.limits.memory /run/config.json)m -XX:+ExitOnOutOfMemoryError \
+            -Ddocument.settings.jakarta.nosql.host=$MONGO_ADDRESS \
+            -Ddocument.database=$MONGO_DATABASE -Ddocument.settings.jakarta.nosql.user=$MONGO_USER \
+            -Ddocument.settings.jakarta.nosql.password=$MONGO_PASSWORD \
+            -Ddocument.settings.mongodb.authentication.source=$MONGO_DATABASE \
+            target/microprofile-microbundle.jar --port $PORT

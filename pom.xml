@@ -22,5 +22,6 @@
         <module>basic-nosql</module>
         <module>oauth2</module>
         <module>oauth2-jwt</module>
+        <module>oauth2-jwt-mongodb</module>
     </modules>
 </project>
